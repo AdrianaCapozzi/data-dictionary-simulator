@@ -2,11 +2,54 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Data Dictionary Simulator</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Data Dictionary Simulator</h1>
+
+<h1>📘 Data Dictionary - clientes_seguros</h1>
+
+<table>
+    <thead>
+        <tr>
+            <th>Coluna</th>
+            <th>Tipo</th>
+            <th>Descrição</th>
+            <th>PK</th>
+            <th>Aceita Nulos</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>id_cliente</td>
+            <td>INT</td>
+            <td>Identificador único do cliente</td>
+            <td>Sim</td>
+            <td>Não</td>
+        </tr>
+        <tr>
+            <td>nome_cliente</td>
+            <td>VARCHAR(100)</td>
+            <td>Nome completo do cliente</td>
+            <td>Não</td>
+            <td>Não</td>
+        </tr>
+        <tr>
+            <td>cpf</td>
+            <td>CHAR(11)</td>
+            <td>CPF do cliente</td>
+            <td>Não</td>
+            <td>Não</td>
+        </tr>
+        <tr>
+            <td>valor_premio</td>
+            <td>DECIMAL(10,2)</td>
+            <td>Valor do prêmio do seguro</td>
+            <td>Não</td>
+            <td>Sim</td>
+        </tr>
+    </tbody>
+</table>
+
 </body>
 </html>
