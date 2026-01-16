@@ -7,7 +7,7 @@
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #0f172a;
+    background-color: #1a1a1a;
     color: #e5e7eb;
     line-height: 1.6;
 }
@@ -20,39 +20,40 @@ body {
 
 h1 {
     margin-bottom: 30px;
-    color: #60a5fa;
+    color: #C41E3A;
     font-size: 2.5rem;
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
-    background-color: #020617;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    background-color: #0a0a0a;
+    box-shadow: 0 4px 6px rgba(196, 30, 58, 0.2);
 }
 
 th, td {
-    border: 1px solid #334155;
+    border: 1px solid #C41E3A;
     padding: 12px 15px;
     text-align: left;
 }
 
 th {
-    background-color: #1e293b;
+    background-color: #C41E3A;
     font-weight: 600;
-    color: #60a5fa;
+    color: #ffffff;
 }
 
 tr:nth-child(even) {
-    background-color: #020617;
+    background-color: #0a0a0a;
 }
 
 tr:nth-child(odd) {
-    background-color: #0f172a;
+    background-color: #1a1a1a;
 }
 
 tr:hover {
-    background-color: #1e293b;
+    background-color: #2d2d2d;
+    border-color: #C41E3A;
 }
 
 /* Responsividade */
