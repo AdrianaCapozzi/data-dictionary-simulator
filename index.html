@@ -2,16 +2,13 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Data Dictionary Simulator - Documentação de tabelas e colunas de banco de dados">
-    <meta name="keywords" content="data dictionary, database, documentation">
-    <meta name="author" content="Adriana Capozzi">
     <title>Data Dictionary Simulator</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="container">
-<h1>📘 Data Dictionary - clientes_seguros</h1>
+
+<h1>📘 Data Dictionary – clientes_seguros</h1>
+<p>Documentação técnica de metadados e governança de dados</p>
 
 <table>
     <thead>
@@ -19,8 +16,12 @@
             <th>Coluna</th>
             <th>Tipo</th>
             <th>Descrição</th>
+            <th>Domínio</th>
+            <th>Regra de Negócio</th>
+            <th>Exemplo</th>
+            <th>LGPD</th>
             <th>PK</th>
-            <th>Aceita Nulos</th>
+            <th>Nulos</th>
         </tr>
     </thead>
     <tbody>
@@ -28,6 +29,10 @@
             <td>id_cliente</td>
             <td>INT</td>
             <td>Identificador único do cliente</td>
+            <td>Numérico sequencial</td>
+            <td>Gerado pelo sistema</td>
+            <td>1</td>
+            <td>Baixa</td>
             <td>Sim</td>
             <td>Não</td>
         </tr>
@@ -35,6 +40,10 @@
             <td>nome_cliente</td>
             <td>VARCHAR(100)</td>
             <td>Nome completo do cliente</td>
+            <td>Texto livre</td>
+            <td>Obrigatório</td>
+            <td>Maria Silva</td>
+            <td>Alta</td>
             <td>Não</td>
             <td>Não</td>
         </tr>
@@ -42,19 +51,37 @@
             <td>cpf</td>
             <td>CHAR(11)</td>
             <td>CPF do cliente</td>
+            <td>Somente números</td>
+            <td>Obrigatório e único</td>
+            <td>12345678901</td>
+            <td>Alta</td>
             <td>Não</td>
             <td>Não</td>
         </tr>
         <tr>
             <td>valor_premio</td>
             <td>DECIMAL(10,2)</td>
-            <td>Valor do prêmio do seguro</td>
+            <td>Valor mensal do prêmio</td>
+            <td>Maior que zero</td>
+            <td>Valor definido em contrato</td>
+            <td>250.75</td>
+            <td>Média</td>
+            <td>Não</td>
+            <td>Sim</td>
+        </tr>
+        <tr>
+            <td>score_risco</td>
+            <td>DECIMAL(5,2)</td>
+            <td>Score atuarial de risco</td>
+            <td>0 a 100</td>
+            <td>Calculado por modelo atuarial</td>
+            <td>72.50</td>
+            <td>Média</td>
             <td>Não</td>
             <td>Sim</td>
         </tr>
     </tbody>
 </table>
-</div>
+
 </body>
 </html>
-<!-- force rebuild -->
