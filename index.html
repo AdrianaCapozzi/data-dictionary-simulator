@@ -80,6 +80,82 @@
             <td>Não</td>
             <td>Sim</td>
         </tr>
+        <tr>
+            <td>sexo_cliente</td>
+            <td>CHAR(1)</td>
+            <td>Sexo do cliente</td>
+            <td>M = Masculino, F = Feminino</td>
+            <td>Obrigatório para cálculo de risco</td>
+            <td>F</td>
+            <td>Alta</td>
+            <td>Não</td>
+            <td>Não</td>
+        </tr>
+        <tr>
+            <td>data_nascimento</td>
+            <td>DATE</td>
+            <td>Data de nascimento do cliente</td>
+            <td>Data válida</td>
+            <td>Obrigatório para cálculo atuarial</td>
+            <td>1985-03-15</td>
+            <td>Alta</td>
+            <td>Não</td>
+            <td>Não</td>
+        </tr>
+        <tr>
+            <td>data_apolice</td>
+            <td>DATE</td>
+            <td>Data de emissão da apólice</td>
+            <td>Data válida</td>
+            <td>Deve ser menor ou igual à data atual</td>
+            <td>2024-01-10</td>
+            <td>Baixa</td>
+            <td>Não</td>
+            <td>Não</td>
+        </tr>
+        <tr>
+            <td>tipo_seguro</td>
+            <td>VARCHAR(50)</td>
+            <td>Tipo de seguro de vida</td>
+            <td>Resgatável, Não Resgatável</td>
+            <td>Obrigatório e imutável após emissão</td>
+            <td>Resgatável</td>
+            <td>Baixa</td>
+            <td>Não</td>
+            <td>Não</td>
+        </tr>
+        <tr>
+            <td>faixa_saldo</td>
+            <td>VARCHAR(50)</td>
+            <td>Faixa de saldo acumulado</td>
+            <td>Até 10k, 10k-50k, 50k-100k, Acima de 100k</td>
+            <td>Calculado automaticamente</td>
+            <td>50k-100k</td>
+            <td>Média</td>
+            <td>Não</td>
+            <td>Sim</td>
+        </tr>
+        <tr>
+            <td>saldo_resgatavel</td>
+            <td>DECIMAL(15,2)</td>
+            <td>Saldo disponível para resgate</td>
+            <td>Maior ou igual a zero</td>
+            <td>Atualizado mensalmente após contribuições</td>
+            <td>75000.50</td>
+            <td>Alta</td>
+            <td>Não</td>
+            <td>Sim</td>
+        </tr>
+        <tr>
+            <td>saldo_nao_resgatavel</td>
+            <td>DECIMAL(15,2)</td>
+            <td>Saldo bloqueado não resgatável</td>
+            <td>Maior ou igual a zero</td>
+            <td>Desbloqueado apenas em caso de morte</td>
+            <td>25000.75</td>
+            <td>Alta</td>
+            <td>Não</td>
+            <td>Sim</td>
     </tbody>
 </table>
 
