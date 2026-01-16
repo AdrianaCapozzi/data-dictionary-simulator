@@ -1,0 +1,1 @@
+-- SQL script to insert data dictionary information

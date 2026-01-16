@@ -1,0 +1,1 @@
+/* SAS program to query data dictionary */
