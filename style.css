@@ -1,31 +1,73 @@
 /* CSS Stylesheet */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #0f172a;
     color: #e5e7eb;
-    padding: 40px;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
 }
 
 h1 {
-    margin-bottom: 20px;
+    margin-bottom: 30px;
+    color: #60a5fa;
+    font-size: 2.5rem;
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
     background-color: #020617;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
 }
 
 th, td {
     border: 1px solid #334155;
-    padding: 10px;
+    padding: 12px 15px;
     text-align: left;
 }
 
 th {
     background-color: #1e293b;
+    font-weight: 600;
+    color: #60a5fa;
 }
 
 tr:nth-child(even) {
     background-color: #020617;
 }
+
+tr:nth-child(odd) {
+    background-color: #0f172a;
+}
+
+tr:hover {
+    background-color: #1e293b;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .container {
+        padding: 20px 10px;
+    }
+
+    h1 {
+        font-size: 1.8rem;
+    }
+
+    th, td {
+        padding: 8px 10px;
+        font-size: 0.9rem;
+    }
+}
+
