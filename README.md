@@ -1,4 +1,4 @@
-# Data Dictionary Simulator & SAS Analytics Environment
+# Data Dictionary & SQL Query Simulator
 
 ## Visão Geral
 Projeto desenvolvido para simular um ambiente analítico completo, unindo modelagem de dados,
