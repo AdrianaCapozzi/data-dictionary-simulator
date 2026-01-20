@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Data Dictionary Simulator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1> Data Dictionary – clientes_seguros</h1>
+<p>Documentação técnica de metadados e governança de dados</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>Coluna</th>
+            <th>Tipo</th>
+            <th>Descrição</th>
+            <th>Domínio</th>
+            <th>Regra de Negócio</th>
+            <th>Exemplo</th>
+            <th>LGPD</th>
+            <th>PK</th>
+            <th>Nulos</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>id_cliente</td>
+            <td>INT</td>
+            <td>Identificador único do cliente</td>
+            <td>Numérico sequencial</td>
+            <td>Gerado pelo sistema</td>
+            <td>1</td>
+            <td>Baixa</td>
+            <td>Sim</td>
+            <td>Não</td>
+        </tr>
+        <tr>
+            <td>nome_cliente</td>
+            <td>VARCHAR(100)</td>
+            <td>Nome completo do cliente</td>
+            <td>Texto livre</td>
+            <td>Obrigatório</td>
+            <td>Maria Silva</td>
+            <td>Alta</td>
+            <td>Não</td>
+            <td>Não</td>
+        </tr>
+        <tr>
+            <td>cpf</td>
+            <td>CHAR(11)</td>
+            <td>CPF do cliente</td>
+            <td>Somente números</td>
+            <td>Obrigatório e único</td>
+            <td>12345678901</td>
+            <td>Alta</td>
+            <td>Não</td>
+            <td>Não</td>
+        </tr>
+        <tr>
+            <td>valor_premio</td>
+            <td>DECIMAL(10,2)</td>
+            <td>Valor mensal do prêmio</td>
+            <td>Maior que zero</td>
+            <td>Valor definido em contrato</td>
+            <td>250.75</td>
+            <td>Média</td>
+            <td>Não</td>
+            <td>Sim</td>
+        </tr>
+        <tr>
+            <td>score_risco</td>
+            <td>DECIMAL(5,2)</td>
+            <td>Score atuarial de risco</td>
+            <td>0 a 100</td>
+            <td>Calculado por modelo atuarial</td>
+            <td>72.50</td>
+            <td>Média</td>
+            <td>Não</td>
+            <td>Sim</td>
+        </tr>
+        <tr>
+            <td>sexo_cliente</td>
+            <td>CHAR(1)</td>
+            <td>Sexo do cliente</td>
+            <td>M = Masculino, F = Feminino</td>
+            <td>Obrigatório para cálculo de risco</td>
+            <td>F</td>
+            <td>Alta</td>
+            <td>Não</td>
+            <td>Não</td>
+        </tr>
+        <tr>
+            <td>data_nascimento</td>
+            <td>DATE</td>
+            <td>Data de nascimento do cliente</td>
+            <td>Data válida</td>
+            <td>Obrigatório para cálculo atuarial</td>
+            <td>1985-03-15</td>
+            <td>Alta</td>
+            <td>Não</td>
+            <td>Não</td>
+        </tr>
+        <tr>
+            <td>data_apolice</td>
+            <td>DATE</td>
+            <td>Data de emissão da apólice</td>
+            <td>Data válida</td>
+            <td>Deve ser menor ou igual à data atual</td>
+            <td>2024-01-10</td>
+            <td>Baixa</td>
+            <td>Não</td>
+            <td>Não</td>
+        </tr>
+        <tr>
+            <td>tipo_seguro</td>
+            <td>VARCHAR(50)</td>
+            <td>Tipo de seguro de vida</td>
+            <td>Resgatável, Não Resgatável</td>
+            <td>Obrigatório e imutável após emissão</td>
+            <td>Resgatável</td>
+            <td>Baixa</td>
+            <td>Não</td>
+            <td>Não</td>
+        </tr>
+        <tr>
+            <td>faixa_saldo</td>
+            <td>VARCHAR(50)</td>
+            <td>Faixa de saldo acumulado</td>
+            <td>Até 10k, 10k-50k, 50k-100k, Acima de 100k</td>
+            <td>Calculado automaticamente</td>
+            <td>50k-100k</td>
+            <td>Média</td>
+            <td>Não</td>
+            <td>Sim</td>
+        </tr>
+        <tr>
+            <td>saldo_resgatavel</td>
+            <td>DECIMAL(15,2)</td>
+            <td>Saldo disponível para resgate</td>
+            <td>Maior ou igual a zero</td>
+            <td>Atualizado mensalmente após contribuições</td>
+            <td>75000.50</td>
+            <td>Alta</td>
+            <td>Não</td>
+            <td>Sim</td>
+        </tr>
+        <tr>
+            <td>saldo_nao_resgatavel</td>
+            <td>DECIMAL(15,2)</td>
+            <td>Saldo bloqueado não resgatável</td>
+            <td>Maior ou igual a zero</td>
+            <td>Desbloqueado apenas em caso de morte</td>
+            <td>25000.75</td>
+            <td>Alta</td>
+            <td>Não</td>
+            <td>Sim</td>
+    </tbody>
+</table>
+
+</body>
+</html>
+
+<!-- force rebuild -->
