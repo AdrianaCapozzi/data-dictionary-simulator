@@ -14,7 +14,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #CC0000 0%, #990000 100%);
             min-height: 100vh;
             padding: 20px;
             color: #333;
@@ -33,11 +33,11 @@
         }
 
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #CC0000 0%, #990000 100%);
             color: white;
             padding: 25px;
             text-align: center;
-            border-bottom: 3px solid #764ba2;
+            border-bottom: 3px solid #990000;
         }
 
         .header h1 {
@@ -68,10 +68,10 @@
             font-size: 14px;
             font-weight: 600;
             text-transform: uppercase;
-            color: #667eea;
+            color: #CC0000;
             margin-bottom: 12px;
             margin-top: 15px;
-            border-bottom: 2px solid #667eea;
+            border-bottom: 2px solid #CC0000;
             padding-bottom: 8px;
         }
 
@@ -87,8 +87,8 @@
         }
 
         .sidebar-item:hover {
-            background: #e8eef7;
-            border-left-color: #667eea;
+            background: #ffe8e8;
+            border-left-color: #CC0000;
             transform: translateX(4px);
         }
 
@@ -109,7 +109,7 @@
         .editor-label {
             font-weight: 600;
             font-size: 14px;
-            color: #667eea;
+            color: #CC0000;
             margin-bottom: 10px;
             text-transform: uppercase;
         }
@@ -128,8 +128,8 @@
 
         textarea:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            border-color: #CC0000;
+            box-shadow: 0 0 0 3px rgba(204, 0, 0, 0.1);
         }
 
         .controls {
@@ -152,13 +152,13 @@
         }
 
         .btn-execute {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #CC0000 0%, #990000 100%);
             color: white;
         }
 
         .btn-execute:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 15px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 8px 15px rgba(204, 0, 0, 0.3);
         }
 
         .btn-execute:active {
@@ -199,11 +199,11 @@
             padding: 10px 12px;
             background: white;
             border-radius: 6px;
-            border-left: 4px solid #667eea;
+            border-left: 4px solid #CC0000;
         }
 
         .result-info strong {
-            color: #667eea;
+            color: #CC0000;
         }
 
         .error-message {
@@ -234,7 +234,7 @@
         }
 
         thead {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #CC0000 0%, #990000 100%);
             color: white;
         }
 
@@ -269,7 +269,7 @@
 
         .spinner {
             border: 4px solid #f3f3f3;
-            border-top: 4px solid #667eea;
+            border-top: 4px solid #CC0000;
             border-radius: 50%;
             width: 40px;
             height: 40px;
@@ -294,9 +294,9 @@
         }
 
         .query-template:hover {
-            background: #667eea;
+            background: #CC0000;
             color: white;
-            border-color: #667eea;
+            border-color: #CC0000;
         }
 
         @media (max-width: 768px) {
@@ -328,7 +328,7 @@
 
         .info-badge {
             display: inline-block;
-            background: #667eea;
+            background: #CC0000;
             color: white;
             padding: 2px 8px;
             border-radius: 4px;
@@ -357,10 +357,12 @@
                 <div class="query-template" onclick="loadQuery('canal')">Análise por Canal de Venda</div>
 
                 <h3>📊 Informações</h3>
-                <div class="sidebar-item" style="background: #e8eef7; cursor: default;">
-                    <strong style="color: #667eea;">Tabela Principal:</strong><br>
+                <div class="sidebar-item" style="background: #ffe8e8; cursor: default;">
+                    <strong style="color: #CC0000;">Padrão SQL:</strong><br>
+                    <code style="font-size: 11px;">SAS PROC SQL</code><br><br>
+                    <strong style="color: #CC0000;">Tabela Principal:</strong><br>
                     <code style="font-size: 11px;">clientes_seguros</code><br><br>
-                    <strong style="color: #667eea;">Registros:</strong><br>
+                    <strong style="color: #CC0000;">Registros:</strong><br>
                     <code style="font-size: 11px;">35 clientes</code>
                 </div>
             </div>
@@ -470,7 +472,8 @@ Exemplo: SELECT tipo_seguro, COUNT(*) FROM clientes_seguros GROUP BY tipo_seguro
         }
 
         const queries = {
-            basic: `SELECT 
+            basic: `PROC SQL;
+SELECT 
     tipo_seguro,
     COUNT(*) AS quantidade_clientes,
     ROUND((COUNT(*) * 100.0) / SUM(COUNT(*)) OVER (), 2) AS percentual,
@@ -479,9 +482,11 @@ Exemplo: SELECT tipo_seguro, COUNT(*) FROM clientes_seguros GROUP BY tipo_seguro
 FROM clientes_seguros
 WHERE status_contrato = 'ATIVO'
 GROUP BY tipo_seguro
-ORDER BY quantidade_clientes DESC`,
+ORDER BY quantidade_clientes DESC;
+QUIT;`,
 
-            faixa_etaria: `SELECT 
+            faixa_etaria: `PROC SQL;
+SELECT 
     CASE 
         WHEN idade < 25 THEN '18-24'
         WHEN idade < 35 THEN '25-34'
@@ -495,10 +500,12 @@ ORDER BY quantidade_clientes DESC`,
     ROUND(AVG(score_risco), 2) AS risco_medio
 FROM clientes_seguros
 WHERE status_contrato = 'ATIVO'
-GROUP BY faixa_etaria
-ORDER BY faixa_etaria`,
+GROUP BY calculated faixa_etaria
+ORDER BY faixa_etaria;
+QUIT;`,
 
-            genero: `SELECT 
+            genero: `PROC SQL;
+SELECT 
     CASE WHEN sexo = 'M' THEN 'Masculino' ELSE 'Feminino' END AS genero,
     COUNT(*) AS total_clientes,
     ROUND(AVG(score_risco), 2) AS risco_medio,
@@ -506,9 +513,11 @@ ORDER BY faixa_etaria`,
     ROUND((SUM(CASE WHEN flag_inadimplente = 'S' THEN 1 ELSE 0 END) * 100.0) / COUNT(*), 2) AS taxa_inadimplencia
 FROM clientes_seguros
 WHERE status_contrato = 'ATIVO'
-GROUP BY sexo`,
+GROUP BY sexo;
+QUIT;`,
 
-            percentis: `SELECT 
+            percentis: `PROC SQL;
+SELECT 
     tipo_seguro,
     MIN(valor_premio) AS minimo,
     ROUND(AVG(valor_premio), 2) AS media,
@@ -517,9 +526,11 @@ GROUP BY sexo`,
 FROM clientes_seguros
 WHERE status_contrato = 'ATIVO'
 GROUP BY tipo_seguro
-ORDER BY media DESC`,
+ORDER BY media DESC;
+QUIT;`,
 
-            risco: `SELECT 
+            risco: `PROC SQL;
+SELECT 
     CASE 
         WHEN score_risco < 30 THEN 'Baixo Risco'
         WHEN score_risco < 60 THEN 'Risco Médio'
@@ -530,31 +541,36 @@ ORDER BY media DESC`,
     ROUND((SUM(CASE WHEN flag_inadimplente = 'S' THEN 1 ELSE 0 END) * 100.0) / COUNT(*), 2) AS taxa_inadimplencia
 FROM clientes_seguros
 WHERE status_contrato = 'ATIVO'
-GROUP BY categoria_risco
-ORDER BY score_medio`,
+GROUP BY calculated categoria_risco
+ORDER BY score_medio;
+QUIT;`,
 
-            cancelamento: `SELECT 
+            cancelamento: `PROC SQL;
+SELECT 
     tipo_seguro,
-    COUNT(*) FILTER (WHERE status_contrato = 'ATIVO') AS ativos,
-    COUNT(*) FILTER (WHERE status_contrato = 'CANCELADO') AS cancelados,
-    ROUND((COUNT(*) FILTER (WHERE status_contrato = 'CANCELADO') * 100.0) / 
-          (COUNT(*) FILTER (WHERE status_contrato = 'ATIVO') + COUNT(*) FILTER (WHERE status_contrato = 'CANCELADO')), 2) AS taxa_cancelamento
+    SUM(CASE WHEN status_contrato = 'ATIVO' THEN 1 ELSE 0 END) AS ativos,
+    SUM(CASE WHEN status_contrato = 'CANCELADO' THEN 1 ELSE 0 END) AS cancelados,
+    ROUND((SUM(CASE WHEN status_contrato = 'CANCELADO' THEN 1 ELSE 0 END) * 100.0) / COUNT(*), 2) AS taxa_cancelamento
 FROM clientes_seguros
 GROUP BY tipo_seguro
-ORDER BY taxa_cancelamento DESC`,
+ORDER BY taxa_cancelamento DESC;
+QUIT;`,
 
-            corretor: `SELECT 
+            corretor: `PROC SQL;
+SELECT 
     corretor_responsavel,
     COUNT(*) AS clientes,
     ROUND(AVG(valor_premio), 2) AS premio_medio,
     ROUND(AVG(score_risco), 2) AS risco_medio,
-    COUNT(CASE WHEN flag_inadimplente = 'S' THEN 1 END) AS inadimplentes
+    SUM(CASE WHEN flag_inadimplente = 'S' THEN 1 ELSE 0 END) AS inadimplentes
 FROM clientes_seguros
 WHERE status_contrato = 'ATIVO'
 GROUP BY corretor_responsavel
-ORDER BY clientes DESC`,
+ORDER BY clientes DESC;
+QUIT;`,
 
-            canal: `SELECT 
+            canal: `PROC SQL;
+SELECT 
     canal_venda,
     COUNT(*) AS total_clientes,
     ROUND(SUM(valor_premio), 2) AS faturamento,
@@ -563,7 +579,8 @@ ORDER BY clientes DESC`,
 FROM clientes_seguros
 WHERE status_contrato = 'ATIVO'
 GROUP BY canal_venda
-ORDER BY total_clientes DESC`
+ORDER BY total_clientes DESC;
+QUIT;`
         };
 
         function loadQuery(queryKey) {
