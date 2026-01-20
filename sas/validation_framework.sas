@@ -1,9 +1,3 @@
-/* ============================================================================
-   SAS DATA VALIDATION FRAMEWORK - DATA DICTIONARY SIMULATOR
-   ============================================================================
-   Framework completo para validação de dados com regras customizáveis
-   ============================================================================ */
-
 libname projeto 'C:\Data\Projeto';
 options pagesize=60 linesize=100;
 
@@ -13,11 +7,7 @@ options pagesize=60 linesize=100;
 
 /* 1.1: Macro para validação de campos obrigatórios */
 %macro validar_obrigatorios(dataset=, variaveis=, output=);
-    data &output;
-        set &dataset;
-        
-        /* Inicializa contador de erros */
-        array erros {*} $500 _erro_1-_erro_10;
+   array erros {*} $500 _erro_1-_erro_10;
         _erro_count = 0;
         
         /* Verifica cada variável */
@@ -84,11 +74,7 @@ options pagesize=60 linesize=100;
    SECTION 2: FRAMEWORK DE VALIDAÇÃO CUSTOMIZADO
    ============================================================================ */
 
-/* 2.1: Dataset de regras de validação */
-data regras_validacao;
-    input
-        tabela $ coluna $ tipo_regra $ descricao $100. parametro1 $ parametro2 $;
-    datalines;
+/* lines;
     clientes_seguros cpf TAMANHO CPF deve ter exatamente 11 dígitos 11
     clientes_seguros idade INTERVALO Idade deve estar entre 18 e 120 18 120
     clientes_seguros valor_premio MINIMO Premio deve ser positivo 0.01
@@ -170,11 +156,7 @@ run;
 proc sql;
     create table duplicatas_cpf as
     select 
-        cpf,
-        count(*) as quantidade,
-        min(id_cliente) as primeiro_id,
-        max(id_cliente) as ultimo_id
-    from projeto.clientes_seguros
+    projeto.clientes_seguros
     where not missing(cpf)
     group by cpf
     having count(*) > 1
@@ -233,11 +215,7 @@ run;
 proc sql;
     create table relatorio_erros_consolidado as
     select 
-        'CPF' as tipo_erro,
-        'Tamanho de CPF inválido' as descricao_erro,
-        count(*) as quantidade_registros,
-        round(100 * count(*) / (select count(*) from projeto.clientes_seguros), 2) 
-            as percentual_dataset
+       as percentual_dataset
     from projeto.clientes_seguros
     where length(cpf) ne 11
     
@@ -365,11 +343,7 @@ ods csvall close;
         select 
             coalesce(d1.&chave, d2.&chave) as &chave,
             case when d1.&chave is not null then 'Em Dataset1' else 'Apenas Dataset2' end as localizacao,
-            count(distinct d1.&chave) as quantidade_ds1,
-            count(distinct d2.&chave) as quantidade_ds2
-        from &dataset1 d1
-        full outer join &dataset2 d2 on d1.&chave = d2.&chave
-        group by &chave, localizacao;
+   group by &chave, localizacao;
     quit;
     
 %mend relatorio_comparativo;
