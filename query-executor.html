@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Query Executor - Data Dictionary Simulator</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 95vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            text-align: center;
+            border-bottom: 3px solid #764ba2;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .content {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: #f8f9fa;
+            border-right: 1px solid #e0e0e0;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .sidebar h3 {
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: #667eea;
+            margin-bottom: 12px;
+            margin-top: 15px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 8px;
+        }
+
+        .sidebar-item {
+            padding: 8px 12px;
+            background: white;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            border-left: 3px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .sidebar-item:hover {
+            background: #e8eef7;
+            border-left-color: #667eea;
+            transform: translateX(4px);
+        }
+
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .editor-section {
+            flex: 0.4;
+            padding: 20px;
+            border-bottom: 1px solid #e0e0e0;
+            overflow-y: auto;
+        }
+
+        .editor-label {
+            font-weight: 600;
+            font-size: 14px;
+            color: #667eea;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        textarea {
+            width: 100%;
+            height: calc(100% - 40px);
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            resize: none;
+            transition: border-color 0.2s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .controls {
+            padding: 15px 20px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+
+        .btn-execute {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-execute:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-execute:active {
+            transform: translateY(0);
+        }
+
+        .btn-clear {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .btn-clear:hover {
+            background: #d0d0d0;
+        }
+
+        .btn-copy {
+            background: #f0f0f0;
+            color: #333;
+            margin-left: auto;
+        }
+
+        .btn-copy:hover {
+            background: #e0e0e0;
+        }
+
+        .results-section {
+            flex: 1;
+            padding: 20px;
+            overflow: auto;
+            background: #fafafa;
+        }
+
+        .result-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 10px 12px;
+            background: white;
+            border-radius: 6px;
+            border-left: 4px solid #667eea;
+        }
+
+        .result-info strong {
+            color: #667eea;
+        }
+
+        .error-message {
+            padding: 15px;
+            background: #fee;
+            border-left: 4px solid #e74c3c;
+            border-radius: 6px;
+            color: #c0392b;
+            font-size: 13px;
+        }
+
+        .success-message {
+            padding: 15px;
+            background: #efe;
+            border-left: 4px solid #27ae60;
+            border-radius: 6px;
+            color: #1e8449;
+            font-size: 13px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 6px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        th {
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 13px;
+            border-right: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 13px;
+        }
+
+        tbody tr:hover {
+            background: #f8f9ff;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #667eea;
+            font-size: 14px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .query-template {
+            padding: 8px 12px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+
+        .query-template:hover {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                height: auto;
+                flex-direction: column;
+            }
+
+            .content {
+                flex-direction: column;
+                height: auto;
+            }
+
+            .sidebar {
+                width: 100%;
+                max-height: 200px;
+            }
+
+            .editor-section {
+                flex: 0.3;
+            }
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .info-badge {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 Query Executor</h1>
+            <p>Execute consultas SQL interativas no banco de dados de seguros</p>
+        </div>
+
+        <div class="content">
+            <div class="sidebar">
+                <h3>📋 Queries Pré-Configuradas</h3>
+                <div class="query-template" onclick="loadQuery('basic')">Clientes por Tipo</div>
+                <div class="query-template" onclick="loadQuery('faixa_etaria')">Análise por Faixa Etária</div>
+                <div class="query-template" onclick="loadQuery('genero')">Análise por Gênero</div>
+                <div class="query-template" onclick="loadQuery('percentis')">Distribuição de Prêmios</div>
+                <div class="query-template" onclick="loadQuery('risco')">Análise de Risco</div>
+                <div class="query-template" onclick="loadQuery('cancelamento')">Taxa de Cancelamento</div>
+                <div class="query-template" onclick="loadQuery('corretor')">Performance por Corretor</div>
+                <div class="query-template" onclick="loadQuery('canal')">Análise por Canal de Venda</div>
+
+                <h3>📊 Informações</h3>
+                <div class="sidebar-item" style="background: #e8eef7; cursor: default;">
+                    <strong style="color: #667eea;">Tabela Principal:</strong><br>
+                    <code style="font-size: 11px;">clientes_seguros</code><br><br>
+                    <strong style="color: #667eea;">Registros:</strong><br>
+                    <code style="font-size: 11px;">35 clientes</code>
+                </div>
+            </div>
+
+            <div class="main">
+                <div class="editor-section">
+                    <div class="editor-label">✏️ Escreva sua consulta SQL</div>
+                    <textarea id="sqlEditor" placeholder="Escreva sua consulta SQL aqui...
+Exemplo: SELECT tipo_seguro, COUNT(*) FROM clientes_seguros GROUP BY tipo_seguro;"></textarea>
+                </div>
+
+                <div class="controls">
+                    <button class="btn-execute" onclick="executeQuery()">▶ Executar</button>
+                    <button class="btn-clear" onclick="clearEditor()">🗑️ Limpar</button>
+                    <button class="btn-copy" onclick="copyToClipboard()">📋 Copiar</button>
+                </div>
+
+                <div class="results-section" id="results">
+                    <div class="no-results">👈 Selecione uma query ou escreva uma consulta para começar</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
+    <script>
+        let db = null;
+
+        // Inicializar banco de dados
+        async function initDatabase() {
+            const response = await fetch('https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.wasm');
+            const filebuffer = await response.arrayBuffer();
+            const SQL = await initSqlJs({
+                wasmBinary: filebuffer,
+            });
+            db = new SQL.Database();
+            createTables();
+            insertData();
+        }
+
+        function createTables() {
+            db.run(`
+                CREATE TABLE clientes_seguros (
+                    id_cliente INT PRIMARY KEY,
+                    nome_cliente VARCHAR(100),
+                    cpf CHAR(11),
+                    sexo CHAR(1),
+                    data_nascimento DATE,
+                    idade INT,
+                    tipo_seguro VARCHAR(50),
+                    valor_premio DECIMAL(10,2),
+                    valor_cobertura DECIMAL(12,2),
+                    data_contratacao DATE,
+                    data_cancelamento DATE,
+                    status_contrato VARCHAR(20),
+                    corretor_responsavel VARCHAR(100),
+                    canal_venda VARCHAR(50),
+                    score_risco DECIMAL(5,2),
+                    flag_inadimplente CHAR(1),
+                    data_atualizacao TIMESTAMP
+                )
+            `);
+        }
+
+        function insertData() {
+            const inserts = [
+                "(1, 'Carlos Silva', '12345678901', 'M', '1990-05-15', 34, 'Auto', 250.00, 50000.00, '2024-01-10', NULL, 'ATIVO', 'João Santos', 'Direto', 28.5, 'N', '2024-01-10')",
+                "(2, 'Maria Oliveira', '23456789012', 'F', '1985-08-22', 39, 'Auto', 280.00, 52000.00, '2024-02-15', NULL, 'ATIVO', 'João Santos', 'Direto', 32.1, 'N', '2024-02-15')",
+                "(3, 'José Pereira', '34567890123', 'M', '1978-03-10', 46, 'Auto', 320.00, 60000.00, '2024-01-20', NULL, 'ATIVO', 'Maria Costa', 'Corretor', 35.7, 'N', '2024-01-20')",
+                "(4, 'Ana Mendes', '45678901234', 'F', '1992-11-28', 32, 'Auto', 245.00, 48000.00, '2024-03-05', NULL, 'ATIVO', 'Maria Costa', 'Corretor', 25.3, 'N', '2024-03-05')",
+                "(5, 'Pedro Gomes', '56789012345', 'M', '1988-07-14', 36, 'Auto', 290.00, 55000.00, '2024-02-20', NULL, 'ATIVO', 'João Santos', 'Direto', 29.8, 'N', '2024-02-20')",
+                "(6, 'Laura Ferreira', '67890123456', 'F', '1980-09-05', 44, 'Residencial', 150.00, 300000.00, '2024-01-15', NULL, 'ATIVO', 'Carlos Rocha', 'Intermediário', 42.1, 'N', '2024-01-15')",
+                "(7, 'Roberto Alves', '78901234567', 'M', '1975-02-18', 49, 'Residencial', 180.00, 350000.00, '2024-02-10', NULL, 'ATIVO', 'Carlos Rocha', 'Intermediário', 45.6, 'N', '2024-02-10')",
+                "(8, 'Patricia Lima', '89012345678', 'F', '1982-06-30', 42, 'Residencial', 165.00, 320000.00, '2024-03-08', NULL, 'ATIVO', 'Ana Paula', 'Corretor', 40.2, 'N', '2024-03-08')",
+                "(9, 'Fernando Costa', '90123456789', 'M', '1987-04-12', 37, 'Residencial', 155.00, 310000.00, '2024-01-25', NULL, 'ATIVO', 'Ana Paula', 'Corretor', 38.9, 'N', '2024-01-25')",
+                "(10, 'Juliana Santos', '01234567890', 'F', '1993-10-20', 31, 'Residencial', 145.00, 290000.00, '2024-02-28', NULL, 'ATIVO', 'Carlos Rocha', 'Intermediário', 35.4, 'N', '2024-02-28')",
+                "(11, 'Ricardo Barbosa', '11223344556', 'M', '1960-01-10', 64, 'Saúde', 450.00, 100000.00, '2024-01-05', NULL, 'ATIVO', 'Pedro Teixeira', 'Direto', 68.5, 'S', '2024-01-05')",
+                "(12, 'Beatriz Morais', '22334455667', 'F', '1955-12-25', 69, 'Saúde', 520.00, 120000.00, '2024-02-01', NULL, 'ATIVO', 'Pedro Teixeira', 'Direto', 72.3, 'S', '2024-02-01')",
+                "(13, 'Gustavo Ribeiro', '33445566778', 'M', '1970-08-15', 54, 'Saúde', 380.00, 85000.00, '2024-01-12', NULL, 'ATIVO', 'Lúcia Mendes', 'Corretor', 55.2, 'N', '2024-01-12')",
+                "(14, 'Márcia Dias', '44556677889', 'F', '1965-03-22', 59, 'Saúde', 420.00, 95000.00, '2024-03-10', NULL, 'ATIVO', 'Lúcia Mendes', 'Corretor', 62.8, 'N', '2024-03-10')",
+                "(15, 'Wagner Oliveira', '55667788990', 'M', '1952-06-08', 72, 'Saúde', 580.00, 140000.00, '2024-02-05', NULL, 'ATIVO', 'Pedro Teixeira', 'Direto', 78.1, 'S', '2024-02-05')",
+                "(16, 'Marcelo Souza', '66778899001', 'M', '1996-09-14', 28, 'Auto', 420.00, 65000.00, '2024-01-08', NULL, 'ATIVO', 'João Santos', 'Direto', 71.2, 'S', '2024-01-08')",
+                "(17, 'Camila Rocha', '77889900112', 'F', '1998-05-30', 26, 'Auto', 450.00, 70000.00, '2024-02-12', NULL, 'ATIVO', 'Maria Costa', 'Corretor', 75.8, 'S', '2024-02-12')",
+                "(18, 'Bruno Santos', '88990011223', 'M', '1995-11-03', 29, 'Auto', 380.00, 58000.00, '2024-01-18', NULL, 'ATIVO', 'João Santos', 'Direto', 68.4, 'S', '2024-01-18')",
+                "(19, 'Fernanda Silva', '99001122334', 'F', '1994-07-19', 30, 'Auto', 410.00, 62000.00, '2024-03-01', NULL, 'ATIVO', 'Maria Costa', 'Corretor', 72.9, 'S', '2024-03-01')",
+                "(20, 'Eduardo Martins', '00112233445', 'M', '1999-02-08', 25, 'Auto', 460.00, 72000.00, '2024-02-22', NULL, 'ATIVO', 'João Santos', 'Direto', 79.5, 'S', '2024-02-22')",
+                "(21, 'Alejandro González', '11122233344', 'M', '1970-04-25', 54, 'Residencial', 320.00, 800000.00, '2024-01-03', NULL, 'ATIVO', 'Ana Paula', 'Intermediário', 48.2, 'N', '2024-01-03')",
+                "(22, 'Isabela Mendes', '22233344455', 'F', '1978-10-12', 46, 'Residencial', 350.00, 850000.00, '2024-02-07', NULL, 'ATIVO', 'Carlos Rocha', 'Intermediário', 51.7, 'N', '2024-02-07')",
+                "(23, 'Thiago Ferreira', '33344455566', 'M', '1985-01-30', 39, 'Residencial', 300.00, 750000.00, '2024-01-22', NULL, 'ATIVO', 'Ana Paula', 'Corretor', 44.3, 'N', '2024-01-22')",
+                "(24, 'Vanessa Costa', '44455566677', 'F', '1988-08-14', 36, 'Residencial', 310.00, 780000.00, '2024-02-28', NULL, 'ATIVO', 'Carlos Rocha', 'Intermediário', 45.9, 'N', '2024-02-28')",
+                "(25, 'Rodrigo Silva', '55566677788', 'M', '1983-12-02', 41, 'Residencial', 330.00, 820000.00, '2024-03-05', NULL, 'ATIVO', 'Ana Paula', 'Corretor', 49.5, 'N', '2024-03-05')",
+                "(26, 'Augusto Ribeiro', '66677788899', 'M', '1975-05-18', 49, 'Auto', 270.00, 51000.00, '2023-06-10', '2024-01-15', 'CANCELADO', 'João Santos', 'Direto', 52.1, 'N', '2024-01-15')",
+                "(27, 'Cristina Lima', '77788899001', 'F', '1980-09-06', 44, 'Saúde', 390.00, 88000.00, '2023-08-20', '2024-02-10', 'CANCELADO', 'Pedro Teixeira', 'Direto', 58.6, 'N', '2024-02-10')",
+                "(28, 'Leandro Gomes', '88899900112', 'M', '1992-03-14', 32, 'Residencial', 160.00, 320000.00, '2023-09-05', '2024-01-30', 'CANCELADO', 'Carlos Rocha', 'Intermediário', 39.2, 'N', '2024-01-30')",
+                "(29, 'Sophie Almeida', '99900011223', 'F', '1990-11-27', 34, 'Auto', 300.00, 55000.00, '2023-07-12', '2024-02-20', 'CANCELADO', 'Maria Costa', 'Corretor', 61.4, 'S', '2024-02-20')",
+                "(30, 'Mateus Barbosa', '00011122334', 'M', '1987-02-09', 37, 'Saúde', 430.00, 98000.00, '2023-10-01', '2024-03-10', 'CANCELADO', 'Lúcia Mendes', 'Corretor', 65.7, 'N', '2024-03-10')",
+                "(31, 'Simone Santos', '11233344556', 'F', '1986-04-20', 38, 'Auto', 265.00, 52000.00, '2024-03-15', NULL, 'ATIVO', 'João Santos', 'Direto', 31.2, 'N', '2024-03-15')",
+                "(32, 'Henrique Oliveira', '22344455667', 'M', '1991-07-08', 33, 'Residencial', 170.00, 330000.00, '2024-03-18', NULL, 'ATIVO', 'Carlos Rocha', 'Intermediário', 37.8, 'N', '2024-03-18')",
+                "(33, 'Dorothea Moura', '33455566778', 'F', '1956-01-15', 68, 'Saúde', 590.00, 145000.00, '2024-03-20', NULL, 'ATIVO', 'Pedro Teixeira', 'Direto', 74.5, 'S', '2024-03-20')",
+                "(34, 'Víctor Costa', '44566677889', 'M', '1984-06-11', 40, 'Auto', 310.00, 58000.00, '2024-03-22', NULL, 'ATIVO', 'Maria Costa', 'Corretor', 33.5, 'N', '2024-03-22')",
+                "(35, 'Natália Ferreira', '55677788990', 'F', '1989-09-19', 35, 'Residencial', 175.00, 340000.00, '2024-03-25', NULL, 'ATIVO', 'Ana Paula', 'Corretor', 36.9, 'N', '2024-03-25')"
+            ];
+
+            inserts.forEach(insert => {
+                db.run(`INSERT INTO clientes_seguros VALUES ${insert}`);
+            });
+        }
+
+        const queries = {
+            basic: `SELECT 
+    tipo_seguro,
+    COUNT(*) AS quantidade_clientes,
+    ROUND((COUNT(*) * 100.0) / SUM(COUNT(*)) OVER (), 2) AS percentual,
+    ROUND(SUM(valor_premio), 2) AS total_premios,
+    ROUND(AVG(valor_premio), 2) AS premio_medio
+FROM clientes_seguros
+WHERE status_contrato = 'ATIVO'
+GROUP BY tipo_seguro
+ORDER BY quantidade_clientes DESC`,
+
+            faixa_etaria: `SELECT 
+    CASE 
+        WHEN idade < 25 THEN '18-24'
+        WHEN idade < 35 THEN '25-34'
+        WHEN idade < 45 THEN '35-44'
+        WHEN idade < 55 THEN '45-54'
+        WHEN idade < 65 THEN '55-64'
+        ELSE '65+'
+    END AS faixa_etaria,
+    COUNT(*) AS quantidade,
+    ROUND(AVG(idade), 1) AS idade_media,
+    ROUND(AVG(score_risco), 2) AS risco_medio
+FROM clientes_seguros
+WHERE status_contrato = 'ATIVO'
+GROUP BY faixa_etaria
+ORDER BY faixa_etaria`,
+
+            genero: `SELECT 
+    CASE WHEN sexo = 'M' THEN 'Masculino' ELSE 'Feminino' END AS genero,
+    COUNT(*) AS total_clientes,
+    ROUND(AVG(score_risco), 2) AS risco_medio,
+    ROUND(AVG(valor_premio), 2) AS premio_medio,
+    ROUND((SUM(CASE WHEN flag_inadimplente = 'S' THEN 1 ELSE 0 END) * 100.0) / COUNT(*), 2) AS taxa_inadimplencia
+FROM clientes_seguros
+WHERE status_contrato = 'ATIVO'
+GROUP BY sexo`,
+
+            percentis: `SELECT 
+    tipo_seguro,
+    MIN(valor_premio) AS minimo,
+    ROUND(AVG(valor_premio), 2) AS media,
+    MAX(valor_premio) AS maximo,
+    COUNT(*) AS total
+FROM clientes_seguros
+WHERE status_contrato = 'ATIVO'
+GROUP BY tipo_seguro
+ORDER BY media DESC`,
+
+            risco: `SELECT 
+    CASE 
+        WHEN score_risco < 30 THEN 'Baixo Risco'
+        WHEN score_risco < 60 THEN 'Risco Médio'
+        ELSE 'Alto Risco'
+    END AS categoria_risco,
+    COUNT(*) AS quantidade,
+    ROUND(AVG(score_risco), 2) AS score_medio,
+    ROUND((SUM(CASE WHEN flag_inadimplente = 'S' THEN 1 ELSE 0 END) * 100.0) / COUNT(*), 2) AS taxa_inadimplencia
+FROM clientes_seguros
+WHERE status_contrato = 'ATIVO'
+GROUP BY categoria_risco
+ORDER BY score_medio`,
+
+            cancelamento: `SELECT 
+    tipo_seguro,
+    COUNT(*) FILTER (WHERE status_contrato = 'ATIVO') AS ativos,
+    COUNT(*) FILTER (WHERE status_contrato = 'CANCELADO') AS cancelados,
+    ROUND((COUNT(*) FILTER (WHERE status_contrato = 'CANCELADO') * 100.0) / 
+          (COUNT(*) FILTER (WHERE status_contrato = 'ATIVO') + COUNT(*) FILTER (WHERE status_contrato = 'CANCELADO')), 2) AS taxa_cancelamento
+FROM clientes_seguros
+GROUP BY tipo_seguro
+ORDER BY taxa_cancelamento DESC`,
+
+            corretor: `SELECT 
+    corretor_responsavel,
+    COUNT(*) AS clientes,
+    ROUND(AVG(valor_premio), 2) AS premio_medio,
+    ROUND(AVG(score_risco), 2) AS risco_medio,
+    COUNT(CASE WHEN flag_inadimplente = 'S' THEN 1 END) AS inadimplentes
+FROM clientes_seguros
+WHERE status_contrato = 'ATIVO'
+GROUP BY corretor_responsavel
+ORDER BY clientes DESC`,
+
+            canal: `SELECT 
+    canal_venda,
+    COUNT(*) AS total_clientes,
+    ROUND(SUM(valor_premio), 2) AS faturamento,
+    ROUND(AVG(valor_premio), 2) AS ticket_medio,
+    ROUND(AVG(score_risco), 2) AS risco_medio
+FROM clientes_seguros
+WHERE status_contrato = 'ATIVO'
+GROUP BY canal_venda
+ORDER BY total_clientes DESC`
+        };
+
+        function loadQuery(queryKey) {
+            document.getElementById('sqlEditor').value = queries[queryKey];
+            executeQuery();
+        }
+
+        function executeQuery() {
+            const sql = document.getElementById('sqlEditor').value.trim();
+            const resultsDiv = document.getElementById('results');
+
+            if (!sql) {
+                resultsDiv.innerHTML = '<div class="no-results">Escreva uma consulta para executar</div>';
+                return;
+            }
+
+            resultsDiv.innerHTML = '<div class="loading"><div class="spinner"></div>Executando...</div>';
+
+            setTimeout(() => {
+                try {
+                    const stmt = db.prepare(sql);
+                    const results = [];
+
+                    while (stmt.step()) {
+                        results.push(stmt.getAsObject());
+                    }
+                    stmt.free();
+
+                    displayResults(results, sql);
+                } catch (error) {
+                    resultsDiv.innerHTML = `<div class="error-message"><strong>❌ Erro na consulta:</strong><br>${error.message}</div>`;
+                }
+            }, 100);
+        }
+
+        function displayResults(results, sql) {
+            const resultsDiv = document.getElementById('results');
+
+            if (results.length === 0) {
+                resultsDiv.innerHTML = '<div class="no-results">Nenhum resultado encontrado</div>';
+                return;
+            }
+
+            const columns = Object.keys(results[0]);
+            let html = `<div class="result-info">
+                <span><strong>✅ ${results.length}</strong> linha(s) retornada(s)</span>
+            </div>`;
+
+            html += '<table><thead><tr>';
+            columns.forEach(col => {
+                html += `<th>${col}</th>`;
+            });
+            html += '</tr></thead><tbody>';
+
+            results.forEach(row => {
+                html += '<tr>';
+                columns.forEach(col => {
+                    let value = row[col];
+                    if (typeof value === 'number' && value % 1 !== 0) {
+                        value = value.toFixed(2);
+                    }
+                    html += `<td>${value !== null ? value : '<em>NULL</em>'}</td>`;
+                });
+                html += '</tr>';
+            });
+
+            html += '</tbody></table>';
+            resultsDiv.innerHTML = html;
+        }
+
+        function clearEditor() {
+            document.getElementById('sqlEditor').value = '';
+            document.getElementById('results').innerHTML = '<div class="no-results">👈 Selecione uma query ou escreva uma consulta para começar</div>';
+        }
+
+        function copyToClipboard() {
+            const sql = document.getElementById('sqlEditor').value;
+            if (sql) {
+                navigator.clipboard.writeText(sql);
+                alert('Consulta copiada!');
+            }
+        }
+
+        // Inicializar quando a página carregar
+        window.addEventListener('load', initDatabase);
+    </script>
+</body>
+</html>
