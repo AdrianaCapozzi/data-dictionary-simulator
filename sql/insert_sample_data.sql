@@ -1,14 +1,3 @@
--- ============================================================================
--- DADOS DE EXEMPLO PARA TESTES - DATA DICTIONARY SIMULATOR
--- ============================================================================
--- Este arquivo contém instruções INSERT para popular as tabelas com dados
--- de teste realistas, permitindo validar todas as consultas estatísticas.
--- ============================================================================
-
--- ============================================================================
--- INSERÇÃO DE DADOS - TABELA: clientes_seguros
--- ============================================================================
-
 -- Bloco 1: Seguros Auto - Clientes de Baixo Risco
 -- JUSTIFICATIVA: Seguro auto é produto de alto volume com diversificação
 INSERT INTO clientes_seguros VALUES
@@ -105,7 +94,3 @@ INSERT INTO data_dictionary VALUES
 ('data_dictionary', 'sensibilidade_lgpd', 'VARCHAR(20)', 'Classificação de sensibilidade conforme LGPD', 'Não Sensível, Sensível, Altamente Sensível', 'Obrigatório, compliance com LGPD/GDPR', 'Não Sensível', 'Não Sensível', 'NÃO', 'NÃO'),
 ('data_dictionary', 'chave_primaria', 'VARCHAR(3)', 'Indica se é chave primária da tabela', 'SIM ou NÃO', 'Obrigatório, apenas uma por tabela', 'SIM', 'Não Sensível', 'NÃO', 'NÃO'),
 ('data_dictionary', 'aceita_nulos', 'VARCHAR(3)', 'Indica se o campo pode conter valores NULL', 'SIM ou NÃO', 'Obrigatório, constraints NOT NULL se NÃO', 'NÃO', 'Não Sensível', 'NÃO', 'NÃO');
-
--- ============================================================================
--- FIM DAS INSERÇÕES - Dados prontos para testes de análise estatística
--- ============================================================================
