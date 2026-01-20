@@ -1,31 +1,16 @@
--- ============================================================================
--- CONSULTAS ESTATÍSTICAS AVANÇADAS - DATA DICTIONARY SIMULATOR
--- ============================================================================
--- Este arquivo contém consultas analíticas e estatísticas utilizando
--- funções de agregação, janelas (window functions) e estatística descritiva
--- para simular relatórios de negócio de seguros com análise profunda de dados.
--- ============================================================================
-
--- ============================================================================
--- 1. ANÁLISE DESCRITIVA BÁSICA - ESTATÍSTICA UNIVARIADA
--- ============================================================================
-
--- 1.1: Distribuição de Clientes por Tipo de Seguro com Contagem e Percentual
--- JUSTIFICATIVA: Entender o portfólio de produtos é essencial para gestão
--- estratégica. Este agrupamento mostra a composição do negócio por produto.
 SELECT 
-    -- Selecionamos o tipo de seguro como dimensão principal
+    -- Seleciona o tipo de seguro como dimensão principal
     tipo_seguro,
-    -- Contamos o número de clientes com esse tipo de seguro
+    -- Conta o número de clientes com esse tipo de seguro
     COUNT(*) AS quantidade_clientes,
-    -- Calculamos o percentual em relação ao total (CAST garante divisão em float)
+    -- Calcula o percentual em relação ao total (CAST garante divisão em float)
     ROUND(
         (COUNT(*) * 100.0) / SUM(COUNT(*)) OVER (), 
         2
     ) AS percentual_do_total,
-    -- Agregamos o valor total de prêmios arrecadados por tipo
+    -- Agrega o valor total de prêmios arrecadados por tipo
     ROUND(SUM(valor_premio), 2) AS total_premios,
-    -- Calculamos o valor médio do prêmio para cada tipo de seguro
+    -- Calcula o valor médio do prêmio para cada tipo de seguro
     ROUND(AVG(valor_premio), 2) AS premio_medio,
     -- Desvio padrão do prêmio (variabilidade de precificação)
     ROUND(STDDEV_POP(valor_premio), 2) AS desvio_padrao_premio,
@@ -36,21 +21,21 @@ SELECT
 FROM 
     clientes_seguros
 WHERE 
-    -- Filtramos apenas contratos ativos para análise em vigor
+    -- Filtra apenas contratos ativos para análise em vigor
     status_contrato = 'ATIVO'
 GROUP BY 
     tipo_seguro
 ORDER BY 
-    -- Ordenamos por quantidade em ordem decrescente para priorização
+    -- Ordena por quantidade em ordem decrescente para priorização
     quantidade_clientes DESC;
 
 -- ============================================================================
 
--- 1.2: Estatísticas de Idade - Análise de Distribuição Demográfica
--- JUSTIFICATIVA: A idade é forte preditor de risco. Análises por faixa etária
+-- Análise de Distribuição Demográfica
+-- A idade é forte preditor de risco. Análises por faixa etária
 -- ajudam na segmentação de mercado e na precificação de riscos.
 SELECT 
-    -- Criamos faixas etárias usando CASE (binning de dados contínuos)
+    -- Cria faixas etárias usando CASE (binning de dados contínuos)
     CASE 
         WHEN idade < 25 THEN '18-24'
         WHEN idade < 35 THEN '25-34'
@@ -94,11 +79,11 @@ ORDER BY
 
 -- ============================================================================
 
--- 1.3: Análise de Sexo e Perfil de Risco
--- JUSTIFICATIVA: Análise de gênero é importante para conformidade regulatória
+-- Análise de Sexo e Perfil de Risco
+-- Análise de gênero é importante para conformidade regulatória
 -- e para identificar padrões de risco diferenciados por sexo.
 SELECT 
-    -- Decodificamos a letra do sexo para legibilidade
+    -- Decodifica a letra do sexo para legibilidade
     CASE 
         WHEN sexo = 'M' THEN 'Masculino'
         WHEN sexo = 'F' THEN 'Feminino'
@@ -136,13 +121,10 @@ GROUP BY
 ORDER BY 
     total_clientes DESC;
 
--- ============================================================================
+-- ANÁLISE DE DISTRIBUIÇÕES E QUARTIS
 
--- 2. ANÁLISE DE DISTRIBUIÇÕES E QUARTIS
--- ============================================================================
-
--- 2.1: Análise de Valor de Prêmio por Percentis
--- JUSTIFICATIVA: Percentis mostram como a distribuição se comporta em
+-- Análise de Valor de Prêmio por Percentis
+-- Percentis mostram como a distribuição se comporta em
 -- diferentes pontos, essencial para entender concentração de valor no portfólio.
 SELECT 
     tipo_seguro,
@@ -197,13 +179,12 @@ GROUP BY
 ORDER BY 
     media_premio DESC;
 
--- ============================================================================
 
--- 2.2: Correlação entre Risco e Inadimplência
--- JUSTIFICATIVA: Verificamos se o score de risco atribuído realmente
+-- Correlação entre Risco e Inadimplência
+-- Verifica se o score de risco atribuído realmente
 -- prediz inadimplência, validando o modelo de scoring.
 SELECT 
-    -- Segmentamos clientes por faixa de score de risco
+    -- Segmenta clientes por faixa de score de risco
     CASE 
         WHEN score_risco < 30 THEN 'Baixo Risco (0-30)'
         WHEN score_risco < 50 THEN 'Risco Médio (30-50)'
@@ -237,19 +218,17 @@ WHERE
 GROUP BY 
     categoria_risco
 ORDER BY 
-    -- Ordenamos por risco crescente para visualizar progressão
+    -- Ordena por risco crescente para visualizar progressão
     MIN(score_risco);
 
--- ============================================================================
 
--- 3. ANÁLISE TEMPORAL E DE TENDÊNCIAS
--- ============================================================================
+-- ANÁLISE TEMPORAL E DE TENDÊNCIAS
 
--- 3.1: Análise de Contratos por Período de Contratação
--- JUSTIFICATIVA: Identificar tendências de crescimento, sazonalidade e
+-- Análise de Contratos por Período de Contratação
+-- Identificar tendências de crescimento, sazonalidade e
 -- desempenho de coortes de clientes por período de contratação.
 SELECT 
-    -- Extraímos o mês e ano de contratação para agrupamento temporal
+    -- Extrai o mês e ano de contratação para agrupamento temporal
     TO_CHAR(data_contratacao, 'YYYY-MM') AS periodo_contratacao,
     -- Total de contratos iniciados em cada período
     COUNT(*) AS qtd_contratos_novos,
@@ -283,10 +262,9 @@ GROUP BY
 ORDER BY 
     periodo_contratacao DESC;
 
--- ============================================================================
 
--- 3.2: Análise de Cancelamentos e Tempo de Permanência
--- JUSTIFICATIVA: Entender churn (cancelamento) é crítico para rentabilidade.
+-- Análise de Cancelamentos e Tempo de Permanência
+-- Entender churn é crítico para rentabilidade.
 -- A análise mostra padrões de retenção e duração média de contratos.
 SELECT 
     -- Status do contrato (ATIVO vs CANCELADO)
@@ -342,13 +320,10 @@ GROUP BY
 ORDER BY 
     total_contratos DESC;
 
--- ============================================================================
 
--- 4. ANÁLISE DE DESEMPENHO POR CANAL DE VENDA E CORRETOR
--- ============================================================================
-
--- 4.1: Análise de Performance por Canal de Venda
--- JUSTIFICATIVA: Diferentes canais têm diferentes características de risco
+-- ANÁLISE DE DESEMPENHO POR CANAL DE VENDA E CORRETOR
+-- Análise de Performance por Canal de Venda
+-- Diferentes canais têm diferentes características de risco
 -- e lucratividade. Entender performance por canal guia alocação de recursos.
 SELECT 
     -- Canal através do qual o contrato foi originado
@@ -391,10 +366,9 @@ GROUP BY
 ORDER BY 
     qtd_clientes_canal DESC;
 
--- ============================================================================
 
--- 4.2: Ranking de Corretores por Performance
--- JUSTIFICATIVA: Análise de desempenho individual permite identificar
+-- Ranking de Corretores por Performance
+-- JAnálise de desempenho individual permite identificar
 -- melhores práticas e oportunidades de treinamento ou realocação.
 SELECT 
     -- Nome do corretor responsável pela carteira
@@ -436,13 +410,10 @@ GROUP BY
 ORDER BY 
     qtd_clientes_corretor DESC;
 
--- ============================================================================
 
--- 5. ANÁLISE AVANÇADA - WINDOW FUNCTIONS E COMPARAÇÕES
--- ============================================================================
-
--- 5.1: Comparação de Cada Contrato com Médias do Segmento
--- JUSTIFICATIVA: Identificar anomalias e outliers que merecem investigação
+-- ANÁLISE AVANÇADA - WINDOW FUNCTIONS E COMPARAÇÕES
+-- Comparação de Cada Contrato com Médias do Segmento
+-- Identificar anomalias e outliers que merecem investigação
 -- para detecção de fraude ou erros de precificação.
 SELECT 
     id_cliente,
@@ -487,16 +458,15 @@ FROM
 WHERE 
     status_contrato = 'ATIVO'
 ORDER BY 
-    -- Ordenamos por maior desvio (possíveis anomalias)
+    -- Ordena por maior desvio (possíveis anomalias)
     ABS(desvio_da_media) DESC
 LIMIT 
-    -- Retornamos os top 50 contratos mais desviantes para análise
+    -- Retorna os top 50 contratos mais desviantes para análise
     50;
 
--- ============================================================================
 
--- 5.2: Análise de Cumulativo e Acumulado de Receita por Segmento
--- JUSTIFICATIVA: Entender concentração de receita (80/20) para
+-- Análise de Cumulativo e Acumulado de Receita por Segmento
+-- Entender concentração de receita (80/20) para
 -- priorização de retenção e qualidade de relacionamento.
 WITH receita_por_tipo AS (
     SELECT 
@@ -546,12 +516,9 @@ FROM
 ORDER BY 
     receita_total DESC;
 
--- ============================================================================
 
--- 6. ANÁLISE DE COBERTURA E EXPOSIÇÃO A RISCOS
--- ============================================================================
-
--- 6.1: Análise de Exposição Total e Índice Sinistralidade Esperado
+-- ANÁLISE DE COBERTURA E EXPOSIÇÃO A RISCOS
+-- Análise de Exposição Total e Índice Sinistralidade Esperado
 -- JUSTIFICATIVA: Exposição total é o valor máximo que a seguradora
 -- poderia pagar. Este cálculo é crítico para solvência e reservas.
 SELECT 
@@ -599,20 +566,18 @@ GROUP BY
 ORDER BY 
     exposicao_total DESC;
 
--- ============================================================================
-
--- 6.2: Matriz de Risco e Retorno
--- JUSTIFICATIVA: Análise bidimensional que mostra a relação entre
+-- Matriz de Risco e Retorno
+-- JAnálise bidimensional que mostra a relação entre
 -- risco (score) e retorno (prêmio) para otimizar portfólio.
 SELECT 
-    -- Criamos faixas de risco
+    -- Criam faixas de risco
     CASE 
         WHEN score_risco < 30 THEN 'Risco Baixo'
         WHEN score_risco < 50 THEN 'Risco Médio'
         WHEN score_risco < 70 THEN 'Risco Alto'
         ELSE 'Risco Crítico'
     END AS segmento_risco,
-    -- Criamos faixas de retorno (prêmio)
+    -- Cria faixas de retorno (prêmio)
     CASE 
         WHEN valor_premio < 100 THEN 'Prêmio Baixo (<100)'
         WHEN valor_premio < 300 THEN 'Prêmio Médio (100-300)'
@@ -648,7 +613,3 @@ GROUP BY
     segmento_premio
 ORDER BY 
     qtd_clientes_segmento DESC;
-
--- ============================================================================
--- FIM DAS CONSULTAS ESTATÍSTICAS
--- ============================================================================

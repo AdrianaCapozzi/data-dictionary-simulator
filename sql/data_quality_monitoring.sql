@@ -1,14 +1,3 @@
--- ============================================================================
--- DATA QUALITY MONITORING - DATA DICTIONARY SIMULATOR
--- ============================================================================
--- Sistema de monitoramento de qualidade de dados com validações,
--- anomalias e métricas de conformidade
--- ============================================================================
-
--- ============================================================================
--- SECTION 1: TABELAS DE CONTROLE E AUDITORIA
--- ============================================================================
-
 -- 1.1: Tabela para registrar execuções de validação
 CREATE TABLE tb_validacao_execucoes (
     id_validacao INT PRIMARY KEY IDENTITY(1,1),

@@ -1,13 +1,3 @@
--- ============================================================================
--- ANALYTICS AVANÇADAS E PROCEDIMENTOS - DATA DICTIONARY SIMULATOR
--- ============================================================================
--- Análises complexas, procedures e funções T-SQL para data warehouse
--- ============================================================================
-
--- ============================================================================
--- SECTION 1: PROCEDURES PARA ANÁLISE DIMENSIONAL
--- ============================================================================
-
 -- 1.1: Procedure para análise de cohorte de clientes
 CREATE PROCEDURE sp_analise_coorte_clientes
     @data_inicio DATE = NULL,

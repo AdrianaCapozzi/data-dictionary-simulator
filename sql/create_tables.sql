@@ -1,7 +1,4 @@
--- SQL script to create data dictionary tables
--- ===============================
 -- Tabela principal de negócios
--- ===============================
 
 CREATE TABLE clientes_seguros (
     id_cliente INT PRIMARY KEY,
