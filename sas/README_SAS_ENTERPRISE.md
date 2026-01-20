@@ -1,47 +1,10 @@
 # 📋 SAS Enterprise Guide - Script Pronto para Copiar/Colar
 
-Este arquivo contém todo o código SAS necessário para análises completas, **pronto para copiar e colar diretamente no SAS Enterprise Guide**.
+Este arquivo contém código SAS necessário para análises completas.
 
 ## 📁 Arquivo
 - **`sas_enterprise_guide_ready.sas`** - Script limpo e otimizado
 
-## ✨ Características
-
-✔️ **Sem comentários blocos** que atrapalham copy/paste  
-✔️ **Código limpo e organizado**  
-✔️ **Pronto para executar** - Apenas ajuste o caminho da libname  
-✔️ **Sem erros de formatação**  
-
-## 🚀 Como Usar
-
-### 1. Abra o SAS Enterprise Guide
-Clique em: **File → New → Program**
-
-### 2. Copie todo o conteúdo do arquivo
-```
-Selecione todo o código em: sas_enterprise_guide_ready.sas
-Ctrl+C para copiar
-```
-
-### 3. Cole no SAS Enterprise Guide
-```
-Cole na janela do programa
-Ctrl+V
-```
-
-### 4. Ajuste o caminho (IMPORTANTE!)
-Procure pela linha:
-```sas
-libname projeto 'C:\Data\Projeto';
-```
-
-E altere o caminho para o seu diretório de dados:
-```sas
-libname projeto 'C:\Seu\Caminho\Aqui';
-```
-
-### 5. Execute o script
-Clique em: **Run → Submit Program** ou **Ctrl+Enter**
 
 ## 📊 O que o script executa
 
