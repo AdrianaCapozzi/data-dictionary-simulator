@@ -504,7 +504,7 @@ QUIT;`,
         ROUND(AVG(score_risco), 2) AS risco_medio
     FROM clientes_seguros
     WHERE status_contrato = 'ATIVO'
-    GROUP BY calculated faixa_etaria
+    GROUP BY faixa_etaria
     ORDER BY faixa_etaria;
 QUIT;`,
 
@@ -545,7 +545,7 @@ QUIT;`,
         ROUND((SUM(CASE WHEN flag_inadimplente = 'S' THEN 1 ELSE 0 END) * 100.0) / COUNT(*), 2) AS taxa_inadimplencia
     FROM clientes_seguros
     WHERE status_contrato = 'ATIVO'
-    GROUP BY calculated categoria_risco
+    GROUP BY categoria_risco
     ORDER BY score_medio;
 QUIT;`,
 
