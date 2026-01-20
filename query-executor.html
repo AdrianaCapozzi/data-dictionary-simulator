@@ -341,7 +341,7 @@
     <div class="container">
         <div class="header">
             <h1>🔍 Query Executor</h1>
-            <p>Execute consultas SQL interativas no banco de dados de seguros</p>
+            <p>Consultas SQL ANSI (compatíveis com SAS PROC SQL) executadas em tempo real</p>
         </div>
 
         <div class="content">
@@ -472,8 +472,7 @@ Exemplo: SELECT tipo_seguro, COUNT(*) FROM clientes_seguros GROUP BY tipo_seguro
         }
 
         const queries = {
-            basic: `PROC SQL;
-SELECT 
+            basic: `SELECT 
     tipo_seguro,
     COUNT(*) AS quantidade_clientes,
     ROUND((COUNT(*) * 100.0) / SUM(COUNT(*)) OVER (), 2) AS percentual,
@@ -482,11 +481,9 @@ SELECT
 FROM clientes_seguros
 WHERE status_contrato = 'ATIVO'
 GROUP BY tipo_seguro
-ORDER BY quantidade_clientes DESC;
-QUIT;`,
+ORDER BY quantidade_clientes DESC`,
 
-            faixa_etaria: `PROC SQL;
-SELECT 
+            faixa_etaria: `SELECT 
     CASE 
         WHEN idade < 25 THEN '18-24'
         WHEN idade < 35 THEN '25-34'
@@ -500,12 +497,10 @@ SELECT
     ROUND(AVG(score_risco), 2) AS risco_medio
 FROM clientes_seguros
 WHERE status_contrato = 'ATIVO'
-GROUP BY calculated faixa_etaria
-ORDER BY faixa_etaria;
-QUIT;`,
+GROUP BY faixa_etaria
+ORDER BY faixa_etaria`,
 
-            genero: `PROC SQL;
-SELECT 
+            genero: `SELECT 
     CASE WHEN sexo = 'M' THEN 'Masculino' ELSE 'Feminino' END AS genero,
     COUNT(*) AS total_clientes,
     ROUND(AVG(score_risco), 2) AS risco_medio,
@@ -513,11 +508,9 @@ SELECT
     ROUND((SUM(CASE WHEN flag_inadimplente = 'S' THEN 1 ELSE 0 END) * 100.0) / COUNT(*), 2) AS taxa_inadimplencia
 FROM clientes_seguros
 WHERE status_contrato = 'ATIVO'
-GROUP BY sexo;
-QUIT;`,
+GROUP BY sexo`,
 
-            percentis: `PROC SQL;
-SELECT 
+            percentis: `SELECT 
     tipo_seguro,
     MIN(valor_premio) AS minimo,
     ROUND(AVG(valor_premio), 2) AS media,
@@ -526,11 +519,9 @@ SELECT
 FROM clientes_seguros
 WHERE status_contrato = 'ATIVO'
 GROUP BY tipo_seguro
-ORDER BY media DESC;
-QUIT;`,
+ORDER BY media DESC`,
 
-            risco: `PROC SQL;
-SELECT 
+            risco: `SELECT 
     CASE 
         WHEN score_risco < 30 THEN 'Baixo Risco'
         WHEN score_risco < 60 THEN 'Risco Médio'
@@ -541,23 +532,19 @@ SELECT
     ROUND((SUM(CASE WHEN flag_inadimplente = 'S' THEN 1 ELSE 0 END) * 100.0) / COUNT(*), 2) AS taxa_inadimplencia
 FROM clientes_seguros
 WHERE status_contrato = 'ATIVO'
-GROUP BY calculated categoria_risco
-ORDER BY score_medio;
-QUIT;`,
+GROUP BY categoria_risco
+ORDER BY score_medio`,
 
-            cancelamento: `PROC SQL;
-SELECT 
+            cancelamento: `SELECT 
     tipo_seguro,
     SUM(CASE WHEN status_contrato = 'ATIVO' THEN 1 ELSE 0 END) AS ativos,
     SUM(CASE WHEN status_contrato = 'CANCELADO' THEN 1 ELSE 0 END) AS cancelados,
     ROUND((SUM(CASE WHEN status_contrato = 'CANCELADO' THEN 1 ELSE 0 END) * 100.0) / COUNT(*), 2) AS taxa_cancelamento
 FROM clientes_seguros
 GROUP BY tipo_seguro
-ORDER BY taxa_cancelamento DESC;
-QUIT;`,
+ORDER BY taxa_cancelamento DESC`,
 
-            corretor: `PROC SQL;
-SELECT 
+            corretor: `SELECT 
     corretor_responsavel,
     COUNT(*) AS clientes,
     ROUND(AVG(valor_premio), 2) AS premio_medio,
@@ -566,11 +553,9 @@ SELECT
 FROM clientes_seguros
 WHERE status_contrato = 'ATIVO'
 GROUP BY corretor_responsavel
-ORDER BY clientes DESC;
-QUIT;`,
+ORDER BY clientes DESC`,
 
-            canal: `PROC SQL;
-SELECT 
+            canal: `SELECT 
     canal_venda,
     COUNT(*) AS total_clientes,
     ROUND(SUM(valor_premio), 2) AS faturamento,
@@ -579,8 +564,7 @@ SELECT
 FROM clientes_seguros
 WHERE status_contrato = 'ATIVO'
 GROUP BY canal_venda
-ORDER BY total_clientes DESC;
-QUIT;`
+ORDER BY total_clientes DESC`
         };
 
         function loadQuery(queryKey) {
